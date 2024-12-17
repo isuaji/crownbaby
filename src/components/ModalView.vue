@@ -1,6 +1,6 @@
 <template>
-  <div class="modal-overlay">
-    <div class="modal-container">
+  <div class="modal-overlay animate-fade-in" @click.self="$emit('close')">
+    <div class="modal-container animate-scale-up">
       <div class="modal-content">
         <div class="modal-header">
           <div class="modal-title-wrapper">
@@ -44,7 +44,7 @@
           </div>
         </form>
         <div class="modal-footer">
-          <button class="cancel-btn" @click="this.$emit('close')">Отмена</button>
+          <button class="cancel-btn" @click="$emit('close')">Отмена</button>
           <button class="submit-btn" @click="ifNotEmpty()">Добавить</button>
         </div>
       </div>
@@ -141,6 +141,7 @@ export default {
   padding: 1.5rem;
   width: 100%;
   box-sizing: border-box;
+  animation: slideUp 0.4s ease-out forwards;
 }
 
 .modal-header {
@@ -253,7 +254,7 @@ export default {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .cancel-btn {
@@ -324,6 +325,87 @@ export default {
   }
   40%, 60% {
     transform: translateX(4px);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.15s ease-out forwards;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.submit-btn, .cancel-btn {
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.submit-btn:hover, .cancel-btn:hover {
+  transform: translateY(-2px);
+}
+
+.submit-btn:active, .cancel-btn:active {
+  transform: translateY(0);
+}
+
+.modal-input:focus,
+.modal-textarea:focus {
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: translateY(-1px);
+}
+
+.input-error {
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translateX(-1px);
+  }
+  20%, 80% {
+    transform: translateX(2px);
+  }
+  30%, 50%, 70% {
+    transform: translateX(-2px);
+  }
+  40%, 60% {
+    transform: translateX(2px);
   }
 }
 </style>

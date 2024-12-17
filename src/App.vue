@@ -1,15 +1,10 @@
 <script>
 import Land from './components/LandView.vue'
 import Calendar from './components/CalendarView.vue'
-  export default {
-    components: { Land, Calendar },
-    data() {
-      return {
-        
-      }
-    },
 
-  }
+export default {
+  components: { Land, Calendar }
+}
 </script>
 
 <template>

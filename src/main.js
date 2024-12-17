@@ -1,23 +1,21 @@
-import './assets/main.css';
-import { createRouter, createWebHistory } from 'vue-router';
-import { createApp } from 'vue';
-import App from './App.vue';
-import Land from './components/LandView.vue';
-import Calendar from './components/CalendarView.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import { createApp } from 'vue'
+import App from './App.vue'
+import './assets/main.css'
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes: [{
-        name: 'Land',
-        path: '/', 
-        component: Land
-    },{
-        name: 'Calendar',
-        path: '/calendar',
-        component: Calendar
-    }]
-});
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [{
+    path: '/',
+    name: 'land',
+    component: () => import('./components/LandView.vue')
+  }, {
+    path: '/calendar',
+    name: 'calendar',
+    component: () => import('./components/CalendarView.vue')
+  }]
+})
 
-const app = createApp(App);
-    app.use(router);
-    app.mount('#app');
+const app = createApp(App)
+app.use(router)
+app.mount('#app')

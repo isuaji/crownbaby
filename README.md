@@ -1,28 +1,41 @@
-# Курсовая
+# 📅 Modern Calendar App
 
-This template should help get you started developing with Vue 3 in Vite.
+Современное веб-приложение календаря с минималистичным дизайном и удобным интерфейсом.
 
-## Recommended IDE Setup
+![Calendar Preview](./src/assets/landview.png)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## ✨ Особенности
 
-## Customize configuration
+- 🎨 Современный минималистичный дизайн
+- 🌙 Темная тема
+- 📱 Адаптивный интерфейс
+- ➕ Добавление событий
+- 🔄 Навигация по месяцам
+- 💫 Плавные анимации
+- 🎯 Интуитивно понятный интерфейс
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## 🛠 Технологии
 
-## Project Setup
+- Vue 3
+- JavaScript
+- CSS3
+- HTML5
+
+## 🚀 Установка и запуск
+
+1. Установка зависимостей:
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Запуск проекта в режиме разработки
 
 ```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
+### Компиляция и минимизация
 
 ```sh
 npm run build

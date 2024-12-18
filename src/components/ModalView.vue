@@ -86,11 +86,11 @@ export default {
   methods: {
     addEvent() {
       const store = useStore()
-      this.uid = store.uid
       const eventData = {
         uid: store.uid,
         title: this.eventTitle,
         description: this.eventDescription,
+        eventDateTime: new Date().toISOString(),
         day: this.day,
         month: this.month,
         year: this.year

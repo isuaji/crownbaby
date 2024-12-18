@@ -15,3 +15,4 @@ export const useStore = defineStore('user', {
     },
     persist: true
 })
+

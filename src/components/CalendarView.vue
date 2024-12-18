@@ -61,6 +61,8 @@
 <script>
 import ModalView from './ModalView.vue'
 import { useStore } from '@/pinia'
+import { userEventStore } from '@/userStore'
+import { backAPI } from '@/backAPI'
 
 export default {
     components: { ModalView },
@@ -163,10 +165,15 @@ export default {
       this.showModal = false
     },
 
-    handleAddEvent(eventData) {
-      const uuid = useStore()
-      this.uid = uuid.uid
-      console.log(eventData)
+    async handleAddEvent(eventData) {
+        try {
+            console.log('Получены данные в handleAddEvent:', eventData)
+            const eventStore = userEventStore()
+            await eventStore.addEvent(eventData)
+            console.log('Событие успешно добавлено')
+        } catch (error) {
+            console.error('Полная ошибка при добавлении события:', error.response?.data || error)
+        }
     }
   }
 }

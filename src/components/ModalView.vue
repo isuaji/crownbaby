@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { useStore } from '@/pinia'
 export default {
   props: {
     day: {
@@ -77,13 +78,17 @@ export default {
       eventDescription: '',
       error: '',
       isTitleEmpty: false,
-      isDescriptionEmpty: false
+      isDescriptionEmpty: false,
+      uid: null
     }
   },
 
   methods: {
     addEvent() {
+      const store = useStore()
+      this.uid = store.uid
       const eventData = {
+        uid: store.uid,
         title: this.eventTitle,
         description: this.eventDescription,
         day: this.day,

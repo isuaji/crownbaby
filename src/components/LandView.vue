@@ -1,4 +1,5 @@
 <script>
+import { useStore } from '@/pinia'
 export default {
   data() {
     return {
@@ -7,7 +8,9 @@ export default {
   },
   methods: {
     goToCalendar() {
-      this.$router.push('/calendar');
+      const store = useStore()
+      store.createUid()
+      this.$router.push(`/calendar/${store.uid}`);
     }
   }
 }

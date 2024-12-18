@@ -60,6 +60,7 @@
 
 <script>
 import ModalView from './ModalView.vue'
+import { useStore } from '@/pinia'
 
 export default {
     components: { ModalView },
@@ -70,8 +71,14 @@ export default {
       showModal: false,
       selectedDay: null,
       selectedMonth: null,
-      selectedYear: null
+      selectedYear: null,
+      uid: null
     }
+  },
+  userKey() {
+    const store = useStore()
+      store.createUid()
+      console.log(store.uid)
   },
 
   computed: {
@@ -157,8 +164,10 @@ export default {
     },
 
     handleAddEvent(eventData) {
+      const uuid = useStore()
+      this.uid = uuid.uid
       console.log(eventData)
-    },
+    }
   }
 }
 </script>

@@ -30,6 +30,20 @@
             </span>
           </div>
           <div class="input-group">
+            <label for="event-time">Время</label>
+            <input
+              v-model="eventTime"
+              type="time"
+              id="event-time"
+              class="modal-input time-input"
+              :class="{ 'input-error': isTimeEmpty }"
+              required
+            >
+            <span v-if="isTimeEmpty" class="error-message">
+              Выберите время события
+            </span>
+          </div>
+          <div class="input-group">
             <label for="event-desc">Описание</label>
             <textarea
               v-model="eventDescription"
@@ -74,11 +88,13 @@ export default {
   
   data() {
     return {
-      eventTitle: '',
-      eventDescription: '',
-      error: '',
+      eventTitle: null,
+      eventDescription: null,
+      eventTime: null,
+      error: null,
       isTitleEmpty: false,
       isDescriptionEmpty: false,
+      isTimeEmpty: false,
       uid: null
     }
   },
@@ -88,12 +104,17 @@ export default {
       const store = useStore()
       const eventData = {
         uid: store.uid,
-        title: this.eventTitle,
-        description: this.eventDescription,
+        eventTitle: this.eventTitle?.trim(),
+        eventDesc: this.eventDescription?.trim(),
         eventDateTime: new Date().toISOString(),
-        day: this.day,
-        month: this.month,
-        year: this.year
+        eventTime: this.eventTime,
+        eventDay: this.day,
+        eventMonth: this.month,
+        eventYear: this.year
+      }
+      
+      if (!eventData.eventTitle || !eventData.eventDesc) {
+        return
       }
       this.$emit('addevent', eventData)
       this.$emit('close')
@@ -101,15 +122,21 @@ export default {
     ifNotEmpty() {
       this.isTitleEmpty = false
       this.isDescriptionEmpty = false
+      this.isTimeEmpty = false
 
-      if (this.eventTitle.length < 2) {
-        this.error = 'Название события не должно быть таким маленьким'
+      if (!this.eventTitle?.trim()) {
+        this.error = 'Название события не может быть пустым'
         this.isTitleEmpty = true
         return
       }
       
-      if (this.eventDescription.length < 2) {
-        this.error = 'Описание события не должно быть таким маленьким'
+      if (!this.eventTime) {
+        this.isTimeEmpty = true
+        return
+      }
+
+      if (!this.eventDescription?.trim()) {
+        this.error = 'Описание события не может быть пустым'
         this.isDescriptionEmpty = true
         return
       }
@@ -412,6 +439,30 @@ export default {
   40%, 60% {
     transform: translateX(2px);
   }
+}
+
+.time-input {
+  width: 100%;
+  padding: 0.75rem;
+  color: #fff;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.time-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.time-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
 }
 </style>
 

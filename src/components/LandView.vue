@@ -1,5 +1,7 @@
 <script>
 import { useStore } from '@/pinia'
+import axios from 'axios'
+import { backAPI } from '@/backAPI'
 export default {
   data() {
     return {
@@ -7,10 +9,14 @@ export default {
     }
   },
   methods: {
-    goToCalendar() {
+    async goToCalendar() {
       const store = useStore()
       store.createUid()
       this.$router.push(`/calendar/${store.uid}`);
+      try {
+        await backAPI.addUser(store.uid)
+      } catch (error) {
+      }
     }
   }
 }
@@ -352,5 +358,29 @@ export default {
     background-position: 0% 50%;
     filter: drop-shadow(0 0 30px rgba(96, 165, 250, 0.4));
   }
+}
+
+.preview-image {
+  flex: 1;
+  max-width: 500px;
+  padding: 2rem;
+  position: relative;
+}
+
+.calendar-preview {
+  width: 100%;
+  height: auto;
+  border: 2px solid transparent;
+  border-radius: 20px;
+  background: linear-gradient(#1E293B, #1E293B) padding-box,
+              linear-gradient(135deg, #60A5FA, #3B82F6, #2563EB) border-box;
+  filter: drop-shadow(0 8px 32px rgba(96, 165, 250, 0.2));
+  transition: all 0.3s ease;
+}
+
+.calendar-preview:hover {
+  filter: drop-shadow(0 12px 40px rgba(96, 165, 250, 0.3));
+  transform: translateY(-8px);
+  border-image: linear-gradient(135deg, #93C5FD, #60A5FA, #3B82F6) 1;
 }
 </style>

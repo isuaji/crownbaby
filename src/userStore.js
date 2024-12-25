@@ -10,6 +10,11 @@ export const userEventStore = defineStore('events', {
     }),
 
     actions: {
+        async addUser(uid) {
+            await backAPI.addUser(uid)
+        },
+
+
         async fetchEvents(uid) {
             this.loading = true
             try {
@@ -20,12 +25,11 @@ export const userEventStore = defineStore('events', {
                 this.loading = false
             }
         },
-        async addEvent(event) {
+        async addEvent(eventData) {
             try {
-                const newEvent = await backAPI.addEvent(event)
-                this.events.push(newEvent.data)
+                const response = await backAPI.addEvent(eventData)
+                return response
             } catch (error) {
-                this.error = error.message
                 throw error
             }
         },
@@ -35,6 +39,9 @@ export const userEventStore = defineStore('events', {
                 event.month === month && 
                 event.year === year
             )
+        },
+        async updateEvent(eventData) {
+            await backAPI.updateEvent(eventData)
         }
     }
 })

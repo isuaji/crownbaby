@@ -3,33 +3,63 @@ import axios from 'axios'
 const API_URL = 'http://localhost:5000'
 
 export const backAPI = {
-    async getEvents(uid) {
+    async addUser(uuid) {
         try {
-            const response = await axios.get(`${API_URL}/api/users/${uid}`)
+            const response = await axios.post(`${API_URL}/calendar/${uuid}`, {uuid: uuid})
             return response.data
         } catch (error) {
-            console.error('Ошибка при получении событий:', error)
+            throw error
+        }
+    },
+
+    async getEvents(uuid) {
+        try {
+            const response = await axios.get(`${API_URL}/api/users/${uuid}`)
+            return response.data
+        } catch (error) {
             throw error
         }
     },
 
     async addEvent(eventData) {
         try {
-            console.log('Отправляемые данные:', eventData)
             const payload = {
-                eventTitle: eventData.title,
-                eventDesc: eventData.description,
+                eventTime: eventData.eventTime,
+                eventTitle: eventData.eventTitle,
+                eventDesc: eventData.eventDesc,
                 eventDateTime: eventData.eventDateTime || new Date().toISOString(),
-                eventDay: eventData.day,
-                eventMonth: eventData.month,
-                eventYear: eventData.year
-            }
-            console.log('Подготовленные данные для отправки:', payload)
-            
+                eventDay: eventData.eventDay,
+                eventMonth: eventData.eventMonth,
+                eventYear: eventData.eventYear
+            }        
             const response = await axios.post(`${API_URL}/events/${eventData.uid}`, payload)
+            window.location.reload();
             return response.data
         } catch (error) {
-            console.error('Ошибка при добавлении события:', error.response?.data || error)
+            throw error
+        }
+    },
+
+    async deleteUserEvent(uuid, eventId) {
+        try {
+            const response = await axios.delete(`${API_URL}/events/delete/${uuid}/${eventId}`)
+            window.location.reload();
+            return response.data 
+        } catch (error) {
+            throw error
+        }
+    },
+
+    async updateEvent(eventData) {
+        try {
+            const response = await axios.put(`${API_URL}/events/update/${eventData.id}/${eventData.uuid}`, {
+                eventTitle: eventData.eventTitle,
+                eventDesc: eventData.eventDesc,
+                eventTime: eventData.eventTime
+            })
+            window.location.reload();
+            return response.data
+        } catch (error) {
             throw error
         }
     }

@@ -4,47 +4,57 @@
       <div class="moving-gradient"></div>
     </div>
     
-    <div class="calendar-header">
-      <div class="month-navigation">
-        <button class="nav-btn" @click="previousMonth">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M15 18l-6-6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-        <h2 class="month-title">
-          <transition name="slide-fade" mode="out-in">
-            <span :key="formattedMonthYear" class="month-text">{{ formattedMonthYear }}</span>
-          </transition>
-        </h2>
-        <button class="nav-btn" @click="nextMonth">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="calendar-wrapper">
-      <transition name="fade-transform" mode="out-in">
-        <div class="calendar-grid" :key="currentDate.getMonth()">
-          <div v-for="day in weekDays" :key="day" class="weekday-header">
-            {{ day }}
+    <h1 class="main-title">Мой календарь</h1>
+    
+    <div class="calendar-layout">
+      <div class="calendar-section">
+        <div class="calendar-header">
+          <div class="month-navigation">
+            <button class="nav-btn" @click="previousMonth">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M15 18l-6-6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <h2 class="month-title">
+              <transition name="slide-fade" mode="out-in">
+                <span :key="formattedMonthYear" class="month-text">{{ formattedMonthYear }}</span>
+              </transition>
+            </h2>
+            <button class="nav-btn" @click="nextMonth">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
-
-          <button
-            @click="openModal(day)"
-            v-for="day in allDays" 
-            :key="day.date" 
-            :class="[
-              'calendar-day',
-              { 'prev-month': day.isPrevMonth },
-              { 'next-month': day.isNextMonth }
-            ]"
-          >
-            {{ day.dayNumber }}
-          </button>
         </div>
-      </transition>
+
+        <div class="calendar-wrapper">
+          <transition name="fade-transform" mode="out-in">
+            <div class="calendar-grid" :key="currentDate.getMonth()">
+              <div v-for="day in weekDays" :key="day" class="weekday-header">
+                {{ day }}
+              </div>
+
+              <button
+                @click="openModal(day)"
+                v-for="day in allDays" 
+                :key="day.date" 
+                :class="[
+                  'calendar-day',
+                  { 'prev-month': day.isPrevMonth },
+                  { 'next-month': day.isNextMonth }
+                ]"
+              >
+                {{ day.dayNumber }}
+              </button>
+            </div>
+          </transition>
+        </div>
+      </div>
+
+      <div class="events-section">
+        <EventsList :uid="uid" />
+      </div>
     </div>
 
     <ModalView 
@@ -55,32 +65,49 @@
       :year="selectedYear"
       @addevent="handleAddEvent"
     />
+    <ModalEditView 
+      v-if="showModalEdit" 
+      @close="closeModal"
+      :event="{
+        day: selectedDay,
+        month: selectedMonth,
+        year: selectedYear,
+        uid: uid
+      }"
+      @save="handleUpdateEvent"
+    />
   </div>
 </template>
 
 <script>
 import ModalView from './ModalView.vue'
+import ModalEditView from './ModalEditView.vue'
+import EventsList from './EventsList.vue'
 import { useStore } from '@/pinia'
 import { userEventStore } from '@/userStore'
 import { backAPI } from '@/backAPI'
 
 export default {
-    components: { ModalView },
+    components: { 
+        ModalView,
+        ModalEditView,
+        EventsList 
+    },
   data() {
     return {
       currentDate: new Date(),
       weekDays: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
       showModal: false,
+      showModalEdit: false,
       selectedDay: null,
       selectedMonth: null,
       selectedYear: null,
       uid: null
     }
   },
-  userKey() {
+  created() {
     const store = useStore()
-      store.createUid()
-      console.log(store.uid)
+    this.uid = store.uid
   },
 
   computed: {
@@ -163,17 +190,37 @@ export default {
     
     closeModal() {
       this.showModal = false
+      this.showModalEdit = false
     },
 
     async handleAddEvent(eventData) {
-        try {
-            console.log('Получены данные в handleAddEvent:', eventData)
-            const eventStore = userEventStore()
-            await eventStore.addEvent(eventData)
-            console.log('Событие успешно добавлено')
-        } catch (error) {
-            console.error('Полная ошибка при добавлении события:', error.response?.data || error)
-        }
+      try {
+        const eventStore = userEventStore()
+        await eventStore.addEvent(eventData)
+      } catch (error) {
+        console.error('ошибка при добавлении события:', error.response.data || error)
+      }
+    },
+    async updateEvent(eventData) {
+      const eventStore = userEventStore()
+      await eventStore.updateEvent(eventData)
+    },
+
+    editEvent(event) {
+      this.selectedDay = event.day
+      this.selectedMonth = event.month
+      this.selectedYear = event.year
+      this.showModalEdit = true
+    },
+
+    async handleUpdateEvent(eventData) {
+      try {
+        const eventStore = userEventStore()
+        await eventStore.updateEvent(eventData)
+        this.closeModal()
+      } catch (error) {
+        console.error('Ошибка при обновлении события:', error)
+      }
     }
   }
 }
@@ -193,7 +240,7 @@ export default {
   flex-direction: column;
   align-items: center;
   font-family: 'Inter', sans-serif;
-  overflow: hidden;
+  overflow: visible;
   max-width: 100vw;
   box-sizing: border-box;
 }
@@ -537,6 +584,109 @@ export default {
 
 .calendar-day:active {
   transform: translateY(0);
+}
+
+.calendar-layout {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  height: 700px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 16px;
+  border: 1px solid rgba(96, 165, 250, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.calendar-section {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  padding: 0.5rem;
+}
+
+.events-section {
+  width: 400px;
+  padding: 0 1rem;
+  margin-top: 4.5rem;
+  height: calc(100% - 4.5rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (max-width: 1200px) {
+  .calendar-layout {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .calendar-layout {
+    flex-direction: column;
+    padding: 0.75rem;
+  }
+
+  .events-section {
+    height: auto;
+    margin-top: 1rem;
+    padding: 1rem 0;
+    border-top: 1px solid rgba(96, 165, 250, 0.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-layout {
+    padding: 0.5rem;
+  }
+}
+
+.main-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .calendar-layout {
+    height: auto;
+    min-height: 700px;
+  }
+
+  .events-section {
+    height: 400px;
+  }
 }
 
 </style>

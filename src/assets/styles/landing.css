@@ -1,0 +1,24 @@
+.landing-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+}
+
+.landing-content {
+  flex: 1;
+  max-width: 60%;
+}
+
+.calendar-image {
+  flex: 1;
+  max-width: 35%;
+  padding-left: 2rem;
+}
+
+.calendar-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+} 

@@ -20,19 +20,23 @@
 - JavaScript
 - CSS3
 - HTML5
+- Flask
+- Python
 
 ## 🚀 Установка и запуск
 
 1. Установка зависимостей:
 
 ```sh
-npm install
+f:npm install
+b: pip install -r requierements.txt
 ```
 
 ### Запуск проекта в режиме разработки
 
 ```sh
-npm run dev
+f:npm run dev
+b:python app.py
 ```
 
 ### Компиляция и минимизация
